@@ -44,10 +44,12 @@ async def sms_webhook(From: str = Form(...), Body: str = Form("")):
     if state == "awaiting_confirmation":
         if body.upper() == "YES":
             conversations[phone] = "called"
-        else:
             return twiml_response(
-                "No worries! Reply YES whenever you're ready for a call."
+                "Great! We'll give you a call shortly to learn more about what you're looking for."
             )
+        return twiml_response(
+            "No worries! Reply YES whenever you're ready for a call."
+        )
 
     if state == "called":
         return twiml_response(
@@ -55,6 +57,6 @@ async def sms_webhook(From: str = Form(...), Body: str = Form("")):
             "We'll text you with listings soon!"
         )
 
-    # Fallback
+    # Fallback — unknown state, restart
     conversations[phone] = "new"
     return twiml_response(GREETING)
