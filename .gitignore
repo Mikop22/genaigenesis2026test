@@ -1,11 +1,7 @@
 .env
+ngrok-bin/
+ngrok.zip
+.pyuser/
 __pycache__/
-*.pyc
-*.pyo
-.venv/
-venv/
-*.egg-info/
-dist/
-build/
-.mypy_cache/
-.pytest_cache/
+app/__pycache__/
+.venv
