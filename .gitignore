@@ -5,3 +5,4 @@ ngrok.zip
 __pycache__/
 app/__pycache__/
 .venv
+venv
