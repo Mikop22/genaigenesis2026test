@@ -1,4 +1,4 @@
-"""Fetch Zillow pages via Playwright (avoids CAPTCHA when used in a real browser)."""
+"""Fetch Zillow pages via Playwright."""
 from typing import Optional
 
 

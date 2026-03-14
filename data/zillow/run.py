@@ -26,7 +26,7 @@ def main():
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    # 1. Save raw HTML first (so when parsing breaks, you can inspect without rerunning)
+    # 1. Save raw HTML first 
     ZILLOW_RAW_HTML.write_text(raw_html, encoding="utf-8")
     print(f"Saved raw HTML: {ZILLOW_RAW_HTML}")
 

@@ -34,7 +34,6 @@ def search(criteria: dict, *, headless: bool = False) -> dict:
     )
     if not html:
         return {"listings": [], "listing_links": [], "raw_html": "", "search_url": url}
-    # Parse: structured (embedded JSON) first, then HTML fallback; already normalized & deduped in parse
     listings = parse_listings(html)
     links = listing_links_from_html(html)
     if not links and listings:

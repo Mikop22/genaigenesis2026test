@@ -2,12 +2,11 @@
 import json
 from bs4 import BeautifulSoup
 
-# Normalized listing shape: same keys every time, missing = ""
 LISTING_KEYS = ("title", "price", "address", "beds", "baths", "sqft", "url", "image", "source")
 
 
 def normalize_listing(raw: dict) -> dict:
-    """One place: clean any listing dict into a consistent shape. Missing fields = ""."""
+    """Clean listing dict into a consistent shape. Missing fields = ""."""
     url = (raw.get("url") or "").strip()
     if url and not url.startswith("http"):
         url = f"https://www.zillow.com{url}" if url.startswith("/") else f"https://www.zillow.com/{url}"
