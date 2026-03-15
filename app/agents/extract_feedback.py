@@ -11,10 +11,11 @@ from dataclasses import dataclass, field
 LOG = logging.getLogger(__name__)
 
 # Simple keyword-based verdict detection (fallback when LLM is unavailable)
-_YES_PATTERNS = re.compile(r"\b(yes|love it|perfect|contact|reach out|apply|interested)\b", re.I)
-_NO_PATTERNS = re.compile(r"\b(no|pass|skip it|not for me|hate|terrible|awful|next)\b", re.I)
+# Negative lookahead (?<!not\s) prevents "not interested" from matching "yes".
+_YES_PATTERNS = re.compile(r"(?<!\bnot\s)\b(yes|love it|perfect|contact|reach out|apply|interested)\b", re.I)
+_NO_PATTERNS = re.compile(r"\b(no|pass|not for me|hate|terrible|awful|next)\b", re.I)
 _MAYBE_PATTERNS = re.compile(r"\b(maybe|possibly|could work|not bad|decent|ok|okay|might work)\b", re.I)
-_SKIP_PATTERNS = re.compile(r"\b(skip|come back|later|revisit|save for later)\b", re.I)
+_SKIP_PATTERNS = re.compile(r"\b(skip|skip it|come back|later|revisit|save for later)\b", re.I)
 
 
 @dataclass
@@ -30,12 +31,13 @@ class FeedbackSignals:
 
 def _keyword_verdict(text: str) -> str:
     """Determine verdict from keywords as a fallback."""
+    # Check skip before no so that "skip" / "skip it" reliably produce "skip"
+    if _SKIP_PATTERNS.search(text):
+        return "skip"
     if _YES_PATTERNS.search(text):
         return "yes"
     if _NO_PATTERNS.search(text):
         return "no"
-    if _SKIP_PATTERNS.search(text):
-        return "skip"
     if _MAYBE_PATTERNS.search(text):
         return "maybe"
     return "neutral"
@@ -43,16 +45,16 @@ def _keyword_verdict(text: str) -> str:
 
 # Common feature mappings for keyword extraction
 _FEATURE_POSITIVE_MAP: dict[re.Pattern, str] = {
-    re.compile(r"(love|like|great|nice|beautiful|amazing)\s+(the\s+)?kitchen", re.I): "updated_kitchen",
-    re.compile(r"(bright|sunny|light|natural light|lots of light)", re.I): "natural_light",
-    re.compile(r"(love|like|great|nice)\s+(the\s+)?bathroom", re.I): "modern_bathroom",
-    re.compile(r"(outdoor|balcony|patio|terrace|garden|deck)", re.I): "outdoor_space",
-    re.compile(r"(spacious|roomy|big|large|open|huge)\s+(room|space|apartment|living|bedroom)?", re.I): "spacious",
-    re.compile(r"(high\s+floor|upper\s+floor|great\s+view|view)", re.I): "high_floor",
-    re.compile(r"(storage|closet|walk-in)", re.I): "storage",
-    re.compile(r"(quiet|peaceful|calm)", re.I): "quiet_location",
-    re.compile(r"(hardwood|wood\s+floor)", re.I): "hardwood_floors",
-    re.compile(r"(updated|renovated|modern|new)", re.I): "updated",
+    re.compile(r"\b(love|like|great|nice|beautiful|amazing)\s+(the\s+)?kitchen\b", re.I): "updated_kitchen",
+    re.compile(r"\b(bright|sunny|natural\s+light|lots\s+of\s+light|well[- ]?lit)\b", re.I): "natural_light",
+    re.compile(r"\b(love|like|great|nice)\s+(the\s+)?bathroom\b", re.I): "modern_bathroom",
+    re.compile(r"\b(outdoor\s+space|balcony|patio|terrace|garden|deck)\b", re.I): "outdoor_space",
+    re.compile(r"\b(spacious|roomy)\b", re.I): "spacious",
+    re.compile(r"\b(high\s+floor|upper\s+floor|great\s+view)\b", re.I): "high_floor",
+    re.compile(r"\b(storage|walk-in\s+closet)\b", re.I): "storage",
+    re.compile(r"\b(quiet|peaceful|calm)\b", re.I): "quiet_location",
+    re.compile(r"\b(hardwood|wood\s+floor)\b", re.I): "hardwood_floors",
+    re.compile(r"\b(updated|renovated|newly\s+renovated)\b", re.I): "updated",
 }
 
 _FEATURE_NEGATIVE_MAP: dict[re.Pattern, str] = {

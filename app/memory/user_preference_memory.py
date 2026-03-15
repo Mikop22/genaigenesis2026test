@@ -170,19 +170,31 @@ class UserPreferenceMemory:
         sync_visual_focus(prefs)
 
 
+def _safe_filename(raw_id: str) -> str:
+    """Sanitise an ID for use as a filename, preventing path traversal."""
+    return raw_id.replace("/", "_").replace("\\", "_").replace("+", "_").replace("..", "_")
+
+
 def save_session(session: dict, storage_dir: str = "data/sessions") -> None:
     """Persist a ``SearchSession`` dict to disk for later resume."""
-    path = Path(storage_dir)
-    path.mkdir(parents=True, exist_ok=True)
-    session_id = session.get("session_id", "unknown")
-    file_path = path / f"{session_id}.json"
+    base = Path(storage_dir).resolve()
+    base.mkdir(parents=True, exist_ok=True)
+    session_id = _safe_filename(session.get("session_id", "unknown"))
+    file_path = base / f"{session_id}.json"
+    if not file_path.resolve().is_relative_to(base):
+        raise ValueError(f"Invalid session_id: path escapes storage directory")
     file_path.write_text(json.dumps(session, indent=2, default=str), encoding="utf-8")
     LOG.debug("Session saved: %s", file_path)
 
 
 def load_session(session_id: str, storage_dir: str = "data/sessions") -> Optional[dict]:
     """Load a previously saved ``SearchSession``."""
-    file_path = Path(storage_dir) / f"{session_id}.json"
+    base = Path(storage_dir).resolve()
+    safe_id = _safe_filename(session_id)
+    file_path = base / f"{safe_id}.json"
+    if not file_path.resolve().is_relative_to(base):
+        LOG.warning("Rejected session_id %r: path traversal", session_id)
+        return None
     if not file_path.exists():
         return None
     try:

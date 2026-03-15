@@ -1,7 +1,5 @@
 """Tests for build_search_url pagination, rank_listings, extract_feedback, derive_visual_focus, and user_preference_memory."""
 
-import json
-import os
 import tempfile
 
 import pytest
@@ -138,6 +136,22 @@ class TestExtractFeedback:
     def test_raw_text_preserved(self):
         signals = extract_feedback("love natural light", use_llm=False)
         assert signals.raw_text == "love natural light"
+
+    def test_skip_it_produces_skip(self):
+        signals = extract_feedback("skip it", use_llm=False)
+        assert signals.verdict == "skip"
+
+    def test_not_interested_produces_no(self):
+        signals = extract_feedback("not interested", use_llm=False)
+        assert signals.verdict != "yes"
+
+    def test_light_alone_does_not_match_natural_light(self):
+        signals = extract_feedback("the light fixture is broken", use_llm=False)
+        assert "natural_light" not in signals.positives
+
+    def test_new_york_does_not_match_updated(self):
+        signals = extract_feedback("apartment in New York", use_llm=False)
+        assert "updated" not in signals.positives
 
 
 # ---------------------------------------------------------------------------
@@ -325,6 +339,20 @@ class TestSessionPersistence:
     def test_load_missing_session(self):
         with tempfile.TemporaryDirectory() as d:
             assert load_session("nonexistent", storage_dir=d) is None
+
+    def test_path_traversal_sanitised(self):
+        with tempfile.TemporaryDirectory() as d:
+            session = {
+                "session_id": "../../etc/evil",
+                "user_id": "u1",
+                "listings": {},
+                "feedback_history": [],
+            }
+            save_session(session, storage_dir=d)
+            # The file should be saved safely inside the storage dir
+            loaded = load_session("../../etc/evil", storage_dir=d)
+            assert loaded is not None
+            assert loaded["session_id"] == "../../etc/evil"
 
 
 # ---------------------------------------------------------------------------

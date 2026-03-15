@@ -32,11 +32,24 @@ def _extract_all_images(html: str) -> list[str]:
     for script in soup.select("script[type='application/ld+json']"):
         try:
             data = json.loads(script.string or "")
-            for img in data.get("image", []) if isinstance(data, dict) else []:
-                u = img if isinstance(img, str) else img.get("url", "")
-                if u and u not in seen and _is_photo_url(u):
-                    seen.add(u)
-                    urls.append(u)
+            # JSON-LD root may be a single dict or a list of dicts
+            items = [data] if isinstance(data, dict) else (data if isinstance(data, list) else [])
+            for item in items:
+                if not isinstance(item, dict):
+                    continue
+                raw_images = item.get("image", [])
+                # "image" may be a single string, a single dict, or a list
+                if isinstance(raw_images, str):
+                    raw_images = [raw_images]
+                elif isinstance(raw_images, dict):
+                    raw_images = [raw_images]
+                if not isinstance(raw_images, list):
+                    continue
+                for img in raw_images:
+                    u = img if isinstance(img, str) else (img.get("url", "") if isinstance(img, dict) else "")
+                    if u and u not in seen and _is_photo_url(u):
+                        seen.add(u)
+                        urls.append(u)
         except (json.JSONDecodeError, TypeError):
             pass
 

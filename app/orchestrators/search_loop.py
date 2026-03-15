@@ -16,7 +16,6 @@ from app.agents.rank_listings import rank_listings
 from app.agents.summarize_listing_images import summarize_listing_images
 from app.memory.user_preference_memory import (
     UserPreferenceMemory,
-    load_session,
     save_session,
 )
 
@@ -114,7 +113,7 @@ def run_search_loop(
     session: dict,
     user_prefs: dict,
     *,
-    present_to_user: Callable[[dict], str],
+    present_to_user: Callable[[dict], Optional[str]],
     on_contact: Optional[Callable[[str, dict], dict]] = None,
     headless: bool = False,
     memory: Optional[UserPreferenceMemory] = None,
@@ -131,7 +130,8 @@ def run_search_loop(
     user_prefs : dict
         Current ``UserPreferences``.
     present_to_user : callable
-        ``(listing_dossier) -> feedback_text``.  Blocks until the user responds.
+        ``(listing_dossier) -> feedback_text | None``.  Blocks until the user
+        responds.  Return ``None`` to signal the user is done.
     on_contact : callable, optional
         ``(url, lead) -> ContactResult``.  Called when the user says "yes".
         If ``None``, the contact step is skipped.
