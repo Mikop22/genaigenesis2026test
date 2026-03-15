@@ -22,7 +22,7 @@
 
 - **Backend:** Python 3, FastAPI, Uvicorn, AWS EC2
 - **AI / NLP:** Context extraction using `railtracks` and custom LLMs (GPT-OSS) 
-- **Communications:** Twilio SMS API, Nvidia PersonaPlex (Quantized to 4b parameters)
+- **Communications:** Twilio SMS API, Nvidia PersonaPlex (Quantized to 4B parameters)
 - **Frontend:** HTML5, CSS3 (Custom styles), Vanilla JS
 - **Scraping / Data:** Playwright, BeautifulSoup4, Pandas, lxml
 
