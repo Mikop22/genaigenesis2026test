@@ -7,13 +7,18 @@ from .playwright_fetch import fetch_html
 SEARCH_SELECTOR = "script[data-zrr-shared-data-key], article, [data-test='property-card-price']"
 
 
-def build_search_url(criteria: dict) -> str:
+def build_search_url(criteria: dict, *, page: int = 1) -> str:
     location = criteria.get("location", "")
     intent = criteria.get("intent", "rent")
+    if intent == "buy":
+        intent = "sale"
     price_max = criteria.get("price_max", "")
     beds_min = criteria.get("beds_min", "")
     slug = quote_plus(location)
-    return f"https://www.zillow.com/homes/for_{intent}/{slug}/?price_max={price_max}&beds_min={beds_min}"
+    path = f"https://www.zillow.com/homes/for_{intent}/{slug}/"
+    if page > 1:
+        path += f"{page}_p/"
+    return f"{path}?price_max={price_max}&beds_min={beds_min}"
 
 
 def search(criteria: dict, *, headless: bool = False) -> dict:
