@@ -57,10 +57,12 @@ _FEATURE_POSITIVE_MAP: dict[re.Pattern, str] = {
 
 _FEATURE_NEGATIVE_MAP: dict[re.Pattern, str] = {
     re.compile(r"(old|outdated|dated|ugly)\s+(the\s+)?(bathroom|bath)", re.I): "dated_bathroom",
+    re.compile(r"(bathroom|bath)\s+(is\s+|looks?\s+)?(old|outdated|dated|ugly)", re.I): "dated_bathroom",
     re.compile(r"(dark|dim|no\s+light|not enough light)", re.I): "dark_rooms",
     re.compile(r"(noisy|loud|traffic|noise)", re.I): "noisy_street",
     re.compile(r"(small|tiny|cramped|tight)", re.I): "small_rooms",
     re.compile(r"(old|outdated|dated|ugly)\s+(the\s+)?kitchen", re.I): "dated_kitchen",
+    re.compile(r"kitchen\s+(is\s+|looks?\s+)?(old|outdated|dated|ugly)", re.I): "dated_kitchen",
     re.compile(r"(ground\s+floor|first\s+floor|basement)", re.I): "ground_floor",
     re.compile(r"(no\s+(laundry|washer|dryer))", re.I): "no_laundry",
     re.compile(r"(no\s+(parking|garage))", re.I): "no_parking",

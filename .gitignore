@@ -10,3 +10,6 @@ venv
 data/output/*.json
 data/output/*.html
 output/
+data/user_prefs/
+data/sessions/
+.pytest_cache/

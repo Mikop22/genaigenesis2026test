@@ -91,7 +91,9 @@ def score_dossier(dossier: dict, ranking_weights: dict) -> float:
     for feature, weight in ranking_weights.items():
         # Extract numeric value if weight uses confidence tracking format
         w = weight if isinstance(weight, (int, float)) else weight.get("value", 0.0)
-        if feature.lower() in text_pool:
+        # Normalise underscores to spaces so "natural_light" matches "natural light"
+        feature_normalised = feature.lower().replace("_", " ")
+        if feature_normalised in text_pool:
             score += w
     return score
 
