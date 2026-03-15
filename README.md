@@ -50,7 +50,7 @@ A Python `dict` with exactly six keys:
 | Key | Type | Description | Example |
 |---|---|---|---|
 | `location` | `str` | City or neighborhood extracted from the conversation | `"Brooklyn or Manhattan NY"` |
-| `intent` | `str` | `"rent"` or `"buy"` | `"rent"` |
+| `intent` | `str` | `"rent"` or `"sale"` | `"rent"` |
 | `price_max` | `int \| str` | Maximum budget (number, or `""` if not mentioned) | `3000` |
 | `beds_min` | `int \| str` | Minimum bedrooms (number, or `""` if not mentioned) | `1` |
 | `baths_min` | `int \| str` | Minimum bathrooms (number, or `""` if not mentioned) | `""` |
@@ -68,7 +68,7 @@ A Python `dict` with exactly six keys:
 }
 ```
 
-If the model returns unparseable output, the agent falls back to safe defaults (`intent="rent"`, all other fields `""`).
+If the model returns unparseable output, the agent falls back to safe defaults (`intent="rent"`, scalar fields `""`, `misc_criteria=[]`).
 
 ### Where it fits
 

@@ -61,7 +61,7 @@ from data.zillow.scraper import search, build_search_url
 path = Path("data/search_criteria/new_york.json")
 criteria = json.loads(path.read_text())
 data = search(criteria)
-# data["listings"], data["listing_links"], data["raw_html"], data["search_url"]
+# data["listings"], data["listing_links"], data["raw_html"], data["search_url"], data["misc_criteria"]
 ```
 
 **From code**  

@@ -63,9 +63,21 @@ def _parse_response_json(text: str) -> dict:
         end = text.find("```", start)
         text = text[start:end] if end > start else text
     try:
-        return json.loads(text)
+        parsed = json.loads(text)
     except json.JSONDecodeError:
         return _default_criteria()
+    # Merge parsed result into defaults so all keys are always present
+    criteria = _default_criteria()
+    criteria.update(parsed)
+    # Ensure misc_criteria is always a list of strings
+    raw_misc = criteria.get("misc_criteria")
+    if isinstance(raw_misc, list):
+        criteria["misc_criteria"] = [str(item) for item in raw_misc if item]
+    elif isinstance(raw_misc, str) and raw_misc:
+        criteria["misc_criteria"] = [raw_misc]
+    else:
+        criteria["misc_criteria"] = []
+    return criteria
 
 
 ENDPOINT_TIMEOUT_S = 10
