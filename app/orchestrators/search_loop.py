@@ -118,6 +118,7 @@ def run_search_loop(
     on_contact: Optional[Callable[[str, dict], dict]] = None,
     headless: bool = False,
     memory: Optional[UserPreferenceMemory] = None,
+    session_storage_dir: str = "data/sessions",
     max_pages: int = 10,
 ) -> dict:
     """
@@ -138,6 +139,8 @@ def run_search_loop(
         Whether to run the browser headless.
     memory : UserPreferenceMemory, optional
         If supplied, preferences and session are persisted after each feedback.
+    session_storage_dir : str
+        Directory for session persistence (used when *memory* is set).
     max_pages : int
         Safety limit on how many Zillow pages to fetch.
     """
@@ -254,7 +257,7 @@ def run_search_loop(
 
         # 9. Persist session
         if memory:
-            save_session(session)
+            save_session(session, storage_dir=session_storage_dir)
 
     return session
 

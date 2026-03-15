@@ -15,10 +15,10 @@ def build_search_url(criteria: dict, *, page: int = 1) -> str:
     price_max = criteria.get("price_max", "")
     beds_min = criteria.get("beds_min", "")
     slug = quote_plus(location)
-    url = f"https://www.zillow.com/homes/for_{intent}/{slug}/?price_max={price_max}&beds_min={beds_min}"
+    path = f"https://www.zillow.com/homes/for_{intent}/{slug}/"
     if page > 1:
-        url += f"/{page}_p/"
-    return url
+        path += f"{page}_p/"
+    return f"{path}?price_max={price_max}&beds_min={beds_min}"
 
 
 def search(criteria: dict, *, headless: bool = False) -> dict:

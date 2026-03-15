@@ -18,16 +18,19 @@ class TestBuildSearchUrl:
         url = build_search_url({"location": "Brooklyn NY", "intent": "rent"})
         assert "for_rent" in url
         assert "Brooklyn" in url
-        # No pagination suffix for page 1
+        # No pagination segment for page 1
         assert "_p/" not in url
 
     def test_page_2(self):
         url = build_search_url({"location": "Brooklyn NY", "intent": "rent"}, page=2)
-        assert "/2_p/" in url
+        assert "2_p/" in url
+        # Pagination segment should come before the query string
+        assert url.index("2_p/") < url.index("?")
 
     def test_page_5(self):
         url = build_search_url({"location": "Brooklyn NY", "intent": "rent"}, page=5)
-        assert "/5_p/" in url
+        assert "5_p/" in url
+        assert url.index("5_p/") < url.index("?")
 
     def test_buy_maps_to_sale(self):
         url = build_search_url({"location": "NYC", "intent": "buy"})
