@@ -11,6 +11,7 @@ xlsxwriter
 lxml
 playwright
 playwright-stealth
+multion
 railtracks
 railtracks[cli]
 openai
