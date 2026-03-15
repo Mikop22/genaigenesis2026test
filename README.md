@@ -7,7 +7,7 @@
 ## Features ✨
 
 - **Conversational Interface:** Communicate naturally via SMS, powered by Twilio webhooks.
-- **AI Criteria Extraction:** Uses advanced LLMs (via `railtracks` and OpenAI-compatible endpoints) to extract structured search criteria (location, intent, max price, beds, baths) from your text messages.
+- **AI Criteria Extraction:** Uses advanced LLMs (via `railtracks` and OpenAI-compatible endpoints) to extract structured search criteria (location, intent, max price, beds, baths, and any miscellaneous preferences like "lots of windows" or "close to a park") from your text messages.
 - **FastAPI Backend:** High-performance, async backend to handle robust conversation state and API rendering.
 - **Sleek Landing Page:** A modern, responsive frontend that showcases the product and lets users initiate texts with a single click.
 - **Data Gathering:** Uses combinations of `Playwright`, `BeautifulSoup4`, and `pandas` to scrape, format, and push listings.
@@ -18,7 +18,7 @@ The core AI agent is the **Build Search Criteria agent** (`app/agents/build_sear
 
 ### What it does
 
-The agent reads a real estate intake conversation and extracts five key search parameters from the natural language. It uses a large language model (via `railtracks` with an OpenAI-compatible endpoint) and two Jinja2 prompt templates to give the model its instructions.
+The agent reads a real estate intake conversation and extracts six key search parameters from the natural language. It uses a large language model (via `railtracks` with an OpenAI-compatible endpoint) and two Jinja2 prompt templates to give the model its instructions.
 
 ### Input
 
@@ -36,6 +36,8 @@ Agent: How many bedrooms do you need?
 User: At least one, two if possible.
 Agent: Any preferred neighborhood?
 User: Somewhere in Brooklyn or Manhattan.
+Agent: Any other must-haves?
+User: I'd love lots of windows, and it'd be great to be close to a park.
 """
 
 criteria = extract_search_criteria(transcript)
@@ -43,7 +45,7 @@ criteria = extract_search_criteria(transcript)
 
 ### Output
 
-A Python `dict` with exactly five keys:
+A Python `dict` with exactly six keys:
 
 | Key | Type | Description | Example |
 |---|---|---|---|
@@ -52,6 +54,7 @@ A Python `dict` with exactly five keys:
 | `price_max` | `int \| str` | Maximum budget (number, or `""` if not mentioned) | `3000` |
 | `beds_min` | `int \| str` | Minimum bedrooms (number, or `""` if not mentioned) | `1` |
 | `baths_min` | `int \| str` | Minimum bathrooms (number, or `""` if not mentioned) | `""` |
+| `misc_criteria` | `list[str]` | Any other preferences mentioned (empty list if none) | `["lots of windows", "close to a park"]` |
 
 ```python
 # Example output for the transcript above
@@ -60,7 +63,8 @@ A Python `dict` with exactly five keys:
     "intent": "rent",
     "price_max": 3000,
     "beds_min": 1,
-    "baths_min": ""
+    "baths_min": "",
+    "misc_criteria": ["lots of windows", "close to a park"]
 }
 ```
 

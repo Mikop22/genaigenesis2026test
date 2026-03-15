@@ -25,8 +25,9 @@ def search(criteria: dict, *, headless: bool = False) -> dict:
         wait_timeout_ms=25_000,
         pause_for_captcha=True,
     )
+    misc_criteria = criteria.get("misc_criteria") or []
     if not html:
-        return {"listings": [], "listing_links": [], "raw_html": "", "search_url": url}
+        return {"listings": [], "listing_links": [], "raw_html": "", "search_url": url, "misc_criteria": misc_criteria}
     listings = parse_listings(html)
     links = listing_links_from_html(html)
     if not links and listings:
@@ -37,4 +38,5 @@ def search(criteria: dict, *, headless: bool = False) -> dict:
         "listing_links": links,
         "raw_html": html,
         "search_url": url,
+        "misc_criteria": misc_criteria,
     }

@@ -50,6 +50,7 @@ def _default_criteria() -> dict:
         "price_max": "",
         "beds_min": "",
         "baths_min": "",
+        "misc_criteria": [],
     }
 
 

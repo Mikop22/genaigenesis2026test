@@ -1,6 +1,6 @@
 # Transcript → search criteria
 
-Turn a call transcript (or any conversation) into a structured criteria dict and save it as JSON. That dict is what the Zillow scraper expects: location, intent, price_max, beds_min, baths_min. Handy for demos and for wiring "intake call" → "search" without editing code.
+Turn a call transcript (or any conversation) into a structured criteria dict and save it as JSON. That dict is what the Zillow scraper expects: location, intent, price_max, beds_min, baths_min, and misc_criteria (a list of any other preferences like "lots of windows" or "close to a park"). Handy for demos and for wiring "intake call" → "search" without editing code.
 
 ---
 
@@ -41,7 +41,7 @@ Copy `.env.example` to `.env` and set:
 ## What it does under the hood
 
 1. Reads the transcript (default: `data/transcripts/sample_intake.txt`).
-2. Renders two Jinja prompts from `templates/build_search_criteria/`: system (extract JSON with location, intent, price_max, beds_min, baths_min) and user (the transcript).
+2. Renders two Jinja prompts from `templates/build_search_criteria/`: system (extract JSON with location, intent, price_max, beds_min, baths_min, misc_criteria) and user (the transcript).
 3. Calls the build-search-criteria agent. The agent uses Railtracks with `OpenAICompatibleProvider` (model + api_base + api_key) pointing at your endpoint. If that fails, it falls back to a direct HTTP POST to the same endpoint.
 4. Parses the reply (strip markdown if present, then JSON) into a criteria dict.
 5. Derives a filename from `location` (e.g. "Brooklyn or Manhattan NY" → `brooklyn_or_manhattan_ny.json`), creates `data/search_criteria/` if needed, writes the JSON there, and prints the path.
