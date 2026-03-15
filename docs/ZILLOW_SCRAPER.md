@@ -29,10 +29,13 @@ criteria = {
     "intent": "rent",
     "price_max": 3000,
     "beds_min": 1,
+    "misc_criteria": ["lots of windows", "close to a park"],
 }
 ```
 
 `build_search_url(criteria)` in `scraper.py` turns that into a Zillow URL: slug the location, plug into `https://www.zillow.com/homes/for_{intent}/{slug}/?price_max=...&beds_min=...`. No discovery—we build the URL from the dict.
+
+The `misc_criteria` list captures natural language preferences that can't be expressed as Zillow URL filters (e.g. "lots of windows", "close to a park", "pet friendly", "in-unit laundry"). They are passed through in the `search()` result under the `"misc_criteria"` key so callers can display them to the user or use them for further filtering.
 
 ---
 
@@ -75,7 +78,8 @@ Listings by URL and by listing ID (last path segment of the URL). Links get dedu
     "listings": [ {...}, ... ],      # normalized, deduped
     "listing_links": [ "https://...", ... ],
     "raw_html": "<!DOCTYPE html>...",
-    "search_url": "https://www.zillow.com/..."
+    "search_url": "https://www.zillow.com/...",
+    "misc_criteria": ["lots of windows", "close to a park"]  # from criteria, empty list if none
 }
 ```
 

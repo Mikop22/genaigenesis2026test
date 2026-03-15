@@ -6,4 +6,6 @@ Agent: How many bedrooms do you need?
 User: At least one, two if possible.
 Agent: Any preferred area?
 User: Yeah, somewhere in New York — Brooklyn or Manhattan would work.
-Agent: Got it. I'll look for rentals in New York, under 3000, one bedroom minimum. We'll be in touch with some options.
+Agent: Any other preferences or must-haves?
+User: I'd love a place with lots of windows and good natural light. Also close to a park if possible, and pet friendly.
+Agent: Got it. I'll look for rentals in New York, under 3000, one bedroom minimum, with lots of windows, close to a park, and pet friendly. We'll be in touch with some options.
